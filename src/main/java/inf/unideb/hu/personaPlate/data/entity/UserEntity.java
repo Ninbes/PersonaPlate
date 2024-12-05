@@ -89,7 +89,7 @@ public class UserEntity implements UserDetails {
 //                .collect(Collectors.toList());
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         for (RoleEntity role : roles) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
         return  authorities;
     }

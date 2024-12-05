@@ -33,7 +33,7 @@ public class JasonWebTokenServiceImpl implements JasonWebTokenService {
                 .claims(claims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+30000))
+                .expiration(new Date(System.currentTimeMillis()+120000))
                 .signWith(key)
                 .compact();
     }

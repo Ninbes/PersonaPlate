@@ -28,7 +28,8 @@ public class UserServiceImpl implements UserService {
 
     public UserEntity getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (String) authentication.getPrincipal();
+        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
+        String username = userEntity.getEmail();
         return repository.findByEmail(username);
     }
 }

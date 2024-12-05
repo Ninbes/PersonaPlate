@@ -25,7 +25,7 @@ public class AuthenticationController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/registration")
+    @PostMapping("/register")
     public String registration(@RequestBody RegistrationDto dto) { return authenticationService.registration(dto); }
 
     @PostMapping("/login")
