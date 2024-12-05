@@ -12,6 +12,7 @@ import inf.unideb.hu.personaPlate.service.dto.RegistrationDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public String login(LoginDto dto) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
+        );
+        var user = userRepository.findByEmail(dto.getEmail());
+        return jasonWebTokenService.generateToken(user);
+    }
+
+    @Override
+    public String registration(RegistrationDto dto) {
         UserEntity userEntity = modelMapper.map(dto, UserEntity.class);
         userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
         RoleEntity roleEntity = roleRepository.findByName("ROLE_USER");
@@ -50,10 +60,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userEntity = userRepository.save(userEntity);
 
         return jasonWebTokenService.generateToken(userEntity);
-    }
-
-    @Override
-    public String registration(RegistrationDto dto) {
-        return "";
     }
 }
