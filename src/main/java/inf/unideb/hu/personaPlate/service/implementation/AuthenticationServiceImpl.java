@@ -35,14 +35,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     JasonWebTokenService jasonWebTokenService;
 
 
-    @Override
-    public String login(LoginDto dto) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
-        );
-        var user = userRepository.findByEmail(dto.getEmail());
-        return jasonWebTokenService.generateToken(user);
-    }
+
 
     @Override
     public String registration(RegistrationDto dto) {
@@ -60,5 +53,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userEntity = userRepository.save(userEntity);
 
         return jasonWebTokenService.generateToken(userEntity);
+    }
+
+    @Override
+    public String login(LoginDto dto) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
+        );
+        var user = userRepository.findByEmail(dto.getEmail());
+        return jasonWebTokenService.generateToken(user);
     }
 }
