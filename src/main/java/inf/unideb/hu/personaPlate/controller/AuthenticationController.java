@@ -4,10 +4,8 @@ import inf.unideb.hu.personaPlate.service.AuthenticationService;
 import inf.unideb.hu.personaPlate.service.dto.LoginDto;
 import inf.unideb.hu.personaPlate.service.dto.RegistrationDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -16,9 +14,14 @@ public class AuthenticationController {
     @Autowired
     AuthenticationService authenticationService;
 
+    @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
+    public ResponseEntity<Void> handleOptions(){
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/registration")
-    public String registration(@RequestParam RegistrationDto dto) { return authenticationService.registration(dto); }
+    public String registration(@RequestBody RegistrationDto dto) { return authenticationService.registration(dto); }
 
     @PostMapping("/login")
-    public String login(@RequestParam LoginDto dto) { return authenticationService.login(dto); }
+    public String login(@RequestBody LoginDto dto) { return authenticationService.login(dto); }
 }
