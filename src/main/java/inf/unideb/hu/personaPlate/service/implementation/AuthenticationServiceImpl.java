@@ -34,7 +34,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     JasonWebTokenService jasonWebTokenService;
 
-
+    @Override
+    public void deleteUser(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("User with ID " + userId + " does not exist.");
+        }
+        userRepository.deleteById(userId);
+    }
 
 
     @Override

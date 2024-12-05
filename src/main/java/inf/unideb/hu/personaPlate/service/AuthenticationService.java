@@ -7,4 +7,6 @@ public interface AuthenticationService {
     String login(LoginDto dto);
 
     String registration(RegistrationDto dto);
+
+    void deleteUser(Long userId);
 }
