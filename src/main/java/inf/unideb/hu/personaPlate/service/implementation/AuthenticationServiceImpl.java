@@ -9,6 +9,7 @@ import inf.unideb.hu.personaPlate.service.JasonWebTokenService;
 import inf.unideb.hu.personaPlate.service.dto.LoginDto;
 import inf.unideb.hu.personaPlate.service.dto.RegistrationDto;
 
+import inf.unideb.hu.personaPlate.service.dto.UpdateUserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,6 +42,35 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new IllegalArgumentException("User with ID " + userId + " does not exist.");
         }
         userRepository.deleteById(userId);
+    }
+
+
+    @Override
+    public void updateUserAccount(Long userId, UpdateUserDto dto, String currentEmail) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // Ensure only the authenticated user can update their own account
+        if (!user.getEmail().equals(currentEmail)) {
+            throw new IllegalStateException("You are not authorized to update this account");
+        }
+
+        // Update fields as necessary
+        if (dto.getName() != null && !dto.getName().isEmpty()) {
+            user.setName(dto.getName());
+        }
+        if (dto.getEmail() != null && !dto.getEmail().isEmpty()) {
+            // Check for duplicate email
+            if (userRepository.findByEmail(dto.getEmail()) != null && !dto.getEmail().equals(user.getEmail())) {
+                throw new IllegalArgumentException("Email is already in use");
+            }
+            user.setEmail(dto.getEmail());
+        }
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
+        userRepository.save(user);
     }
 
 
