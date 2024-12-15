@@ -2,6 +2,8 @@ package inf.unideb.hu.personaPlate.data.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "Role")
 public class RoleEntity {
@@ -11,6 +13,17 @@ public class RoleEntity {
     private Long id;
     @Column(name = "name")
     private String name;
+
+    @ManyToMany(mappedBy = "roles")
+    private Set<UserEntity> users;
+
+    public Set<UserEntity> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<UserEntity> users) {
+        this.users = users;
+    }
 
     public RoleEntity() {}
 

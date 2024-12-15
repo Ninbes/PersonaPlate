@@ -18,8 +18,12 @@ public class UserEntity implements UserDetails {
     private String email;
     @Column(name = "password")
     private String password;
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private Set<RoleEntity> roles;
 
     public UserEntity() {}

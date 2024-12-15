@@ -6,11 +6,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private authUrl = 'http://localhost:8080/auth/bejelentkezes';
+  private authUrl = 'http://localhost:8080/auth/login';
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, jelszo: string): Observable<any> {
-    return this.http.post(this.authUrl, { email, jelszo: jelszo }, {responseType: 'text'});
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(this.authUrl, { email, password: password }, {responseType: 'text'});
   }
 }
