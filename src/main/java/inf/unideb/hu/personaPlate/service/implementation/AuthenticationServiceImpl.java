@@ -50,17 +50,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // Ensure only the authenticated user can update their own account
         if (!user.getEmail().equals(currentEmail)) {
             throw new IllegalStateException("You are not authorized to update this account");
         }
 
-        // Update fields as necessary
         if (dto.getName() != null && !dto.getName().isEmpty()) {
             user.setName(dto.getName());
         }
         if (dto.getEmail() != null && !dto.getEmail().isEmpty()) {
-            // Check for duplicate email
             if (userRepository.findByEmail(dto.getEmail()) != null && !dto.getEmail().equals(user.getEmail())) {
                 throw new IllegalArgumentException("Email is already in use");
             }

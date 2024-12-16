@@ -10,8 +10,6 @@ import inf.unideb.hu.personaPlate.service.dto.UpdateUserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 //@CrossOrigin(origins = "localhost4200")
@@ -42,13 +40,12 @@ public class AuthenticationController {
     @PostMapping("/login")
     public String login(@RequestBody LoginDto dto) { return authenticationService.login(dto); }
 
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteUser() {
         UserEntity authenticatedUser = userService.getAuthenticatedUser();
 
-        // Check if the authenticated user is the same as the user trying to delete their account
-        if (authenticatedUser.getId().equals(userId)) {
-            authenticationService.deleteUser(userId);
+        if (authenticatedUser != null) {
+            authenticationService.deleteUser(authenticatedUser.getId());
             return ResponseEntity.ok("User deleted successfully");
         }
 
@@ -56,15 +53,20 @@ public class AuthenticationController {
     }
     @PutMapping("/update")
     public ResponseEntity<?> updateUser(@RequestBody UpdateUserDto dto) {
-        // Fetch the authenticated user
         UserEntity authenticatedUser = userService.getAuthenticatedUser();
 
-        // Perform updates
-        authenticatedUser.setName(dto.getName());
-        authenticatedUser.setEmail(dto.getEmail());
-        authenticatedUser.setPassword(passwordEncoder.encode(dto.getPassword())); // Encode password
+        if (dto.getName() != null && !dto.getName().trim().isEmpty()) {
+            authenticatedUser.setName(dto.getName());
+        }
 
-        // Persist the changes to the database
+        if (dto.getEmail() != null && !dto.getEmail().trim().isEmpty()) {
+            authenticatedUser.setEmail(dto.getEmail());
+        }
+
+        if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty()) {
+            authenticatedUser.setPassword(passwordEncoder.encode(dto.getPassword())); // Encode password
+        }
+
         userRepository.save(authenticatedUser);
 
         return ResponseEntity.ok("User updated successfully");
