@@ -32,7 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
-        //nincs authorization header vagy nem bearer sémát használ
+
         if(StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader,"Bearer ")){
             filterChain.doFilter(request, response);
             return;

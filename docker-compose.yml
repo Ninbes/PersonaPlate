@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: ./Frontend
+    ports:
+      - "80:80"
+    networks:
+      - mynetwork
+
+  backend:
+    build:
+      context: ./
+    ports:
+      - "8080:8080"
+    networks:
+      - mynetwork
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      retries: 3
+
+networks:
+  mynetwork:
+    driver: bridge

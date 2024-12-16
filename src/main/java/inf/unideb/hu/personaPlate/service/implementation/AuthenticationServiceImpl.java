@@ -9,10 +9,12 @@ import inf.unideb.hu.personaPlate.service.JasonWebTokenService;
 import inf.unideb.hu.personaPlate.service.dto.LoginDto;
 import inf.unideb.hu.personaPlate.service.dto.RegistrationDto;
 
+import inf.unideb.hu.personaPlate.service.dto.UpdateUserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +46,36 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
+    public void updateUserAccount(Long userId, UpdateUserDto dto, String currentEmail) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (!user.getEmail().equals(currentEmail)) {
+            throw new IllegalStateException("You are not authorized to update this account");
+        }
+
+        if (dto.getName() != null && !dto.getName().isEmpty()) {
+            user.setName(dto.getName());
+        }
+        if (dto.getEmail() != null && !dto.getEmail().isEmpty()) {
+            if (userRepository.findByEmail(dto.getEmail()) != null && !dto.getEmail().equals(user.getEmail())) {
+                throw new IllegalArgumentException("Email is already in use");
+            }
+            user.setEmail(dto.getEmail());
+        }
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
+        userRepository.save(user);
+    }
+
+
+    @Override
     public String registration(RegistrationDto dto) {
+        if (userRepository.findByEmail(dto.getEmail()) != null) {
+            throw new IllegalArgumentException("Email is already in use");
+        }
         UserEntity userEntity = modelMapper.map(dto, UserEntity.class);
         userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
         RoleEntity roleEntity = roleRepository.findByName("ROLE_USER");
@@ -63,10 +94,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public String login(LoginDto dto) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
+            );
+        } catch (AuthenticationException e) {
+            throw new IllegalArgumentException("Invalid email or password");
+        }
         var user = userRepository.findByEmail(dto.getEmail());
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
         return jasonWebTokenService.generateToken(user);
     }
 }
