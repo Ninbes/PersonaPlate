@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: ./Frontend
+    ports:
+      - "80:80"  # Expose port 80 for frontend access
+    networks:
+      - mynetwork
+
+  backend:
+    build:
+      context: ./
+    ports:
+      - "8080:8080"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
