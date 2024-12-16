@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
@@ -18,6 +19,7 @@ import { Router } from '@angular/router';
     MatFormFieldModule,
     MatCardModule,
     FormsModule,
+    CommonModule
   ],
 })
 export class RegisterComponent {
