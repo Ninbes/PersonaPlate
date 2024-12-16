@@ -26,11 +26,15 @@ export class LoginComponent {
       (response: any) => {
         localStorage.setItem('token', response);
         console.log('Sikeres bejelentkezés');
-        this.router.navigate(['/ruhak']);
+        this.router.navigate(['/manage-account']);
       },
       error => {
         console.error('Hiba történt a bejelentkezés során', error);
       }
     );
   }
+  goToRegister() {
+    this.router.navigate(['/register']);
+  }
+  
 }

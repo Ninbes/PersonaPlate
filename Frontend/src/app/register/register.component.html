@@ -1,0 +1,44 @@
+<!-- <mat-card>
+    <h2>Regisztráció</h2>
+    <form (ngSubmit)="register()">
+      <mat-form-field appearance="fill">
+        <mat-label>Név</mat-label>
+        <input matInput [(ngModel)]="name" name="name" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="email" name="email" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Jelszó</mat-label>
+        <input matInput type="password" [(ngModel)]="password" name="password" required>
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">Regisztráció</button>
+    </form>
+    <p>{{ message }}</p>
+  </mat-card>
+   -->
+   <mat-card>
+    <h2>Regisztráció</h2>
+    <form *ngIf="!registrationSuccess; else successMessage" (ngSubmit)="register()">
+      <mat-form-field appearance="fill">
+        <mat-label>Név</mat-label>
+        <input matInput [(ngModel)]="name" name="name" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" [(ngModel)]="email" name="email" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Jelszó</mat-label>
+        <input matInput type="password" [(ngModel)]="password" name="password" required>
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">Regisztráció</button>
+    </form>
+  
+    <ng-template #successMessage>
+      <p>{{ message }}</p>
+      <button mat-raised-button color="accent" (click)="goToLogin()">Vissza a Bejelentkezéshez</button>
+    </ng-template>
+  </mat-card>
+  
