@@ -5,6 +5,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AlertDialogComponent } from '../dialog/alert-dialog/alert-dialog.component';
+
 
 @Component({
   selector: 'app-manage-account',
@@ -17,6 +20,7 @@ import { FormsModule } from '@angular/forms';
     MatFormFieldModule,
     MatCardModule,
     FormsModule,
+    MatDialogModule
   ],
 })
 export class ManageAccountComponent implements OnInit {
@@ -26,7 +30,14 @@ export class ManageAccountComponent implements OnInit {
   password = '';
   message = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private dialog: MatDialog) {}
+
+  openDialog(title: string, message: string): void {
+    this.dialog.open(AlertDialogComponent, {
+      width: '350px',
+      data: { title, message },
+    });
+  }
 
   ngOnInit() {
     const token = localStorage.getItem('token');
@@ -41,10 +52,11 @@ export class ManageAccountComponent implements OnInit {
     const updates = { name: this.name, email: this.email, password: this.password };
     this.authService.updateAccount(this.token, updates).subscribe(
       () => {
-        this.message = 'Fiók sikeresen frissítve!';
+        this.openDialog('Success', 'Fiók sikeresen frissítve!');
       },
       (error) => {
-        this.message = 'Hiba történt: ' + error.error.message;
+        const errorMessage = error.error?.message || 'Ismeretlen hiba történt.';
+        this.openDialog('Error', `Hiba történt: ${errorMessage}`);
       }
     );
   }
@@ -53,14 +65,15 @@ export class ManageAccountComponent implements OnInit {
     if (this.token) {
       this.authService.deleteAccount(this.token).subscribe(
         () => {
-          this.message = 'Fiók sikeresen törölve!';
+          this.openDialog('Success', 'Fiók sikeresen törölve!');
         },
         (error) => {
-          this.message = 'Hiba történt: ' + error.error.message;
+          const errorMessage = error.error?.message || 'Ismeretlen hiba történt.';
+          this.openDialog('Error', `Hiba történt: ${errorMessage}`);
         }
       );
     } else {
-      this.message = 'No token found. Please log in again.';
+        this.openDialog('Error', 'No token found. Please log in again.');
     }
   }
 }
