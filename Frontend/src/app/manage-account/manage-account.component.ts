@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -19,15 +19,23 @@ import { FormsModule } from '@angular/forms';
     FormsModule,
   ],
 })
-export class ManageAccountComponent {
+export class ManageAccountComponent implements OnInit {
   token = '';
   name = '';
   email = '';
   password = '';
-  userId = '';
   message = '';
 
   constructor(private authService: AuthService) {}
+
+  ngOnInit() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.token = token;
+    } else {
+      console.error('No token found!');
+    }
+  }
 
   updateAccount() {
     const updates = { name: this.name, email: this.email, password: this.password };
@@ -42,13 +50,17 @@ export class ManageAccountComponent {
   }
 
   deleteAccount() {
-    this.authService.deleteAccount(this.token, this.userId).subscribe(
-      () => {
-        this.message = 'Fiók sikeresen törölve!';
-      },
-      (error) => {
-        this.message = 'Hiba történt: ' + error.error.message;
-      }
-    );
+    if (this.token) {
+      this.authService.deleteAccount(this.token).subscribe(
+        () => {
+          this.message = 'Fiók sikeresen törölve!';
+        },
+        (error) => {
+          this.message = 'Hiba történt: ' + error.error.message;
+        }
+      );
+    } else {
+      this.message = 'No token found. Please log in again.';
+    }
   }
 }

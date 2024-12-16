@@ -27,23 +27,25 @@ export class RegisterComponent {
   email = '';
   password = '';
   message = '';
+  registrationSuccess = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  registrationSuccess = false;
-
-register() {
-  this.authService.register(this.name, this.email, this.password).subscribe(
-    () => {
-      this.message = 'Sikeres regisztráció!';
-      this.registrationSuccess = true; // Mark success
-    },
-    (error) => {
-      this.message = 'Hiba történt a regisztráció során: ' + error.error.message;
-      this.registrationSuccess = false;
-    }
-  );
-}
+ 
+  register() {
+    this.authService.register(this.name, this.email, this.password).subscribe({
+      next: (response: any) => {
+        console.log('Response:', response);
+        this.message = 'Sikeres regisztráció!';
+        this.registrationSuccess = true;
+      },
+      error: (error) => {
+        console.error('Error:', error);
+        this.message = 'Hiba történt a regisztráció során: ' + error.error.message;
+        this.registrationSuccess = false;
+      }
+    });
+  }
 
 goToLogin() {
   this.router.navigate(['/']);

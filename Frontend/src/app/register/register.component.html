@@ -36,9 +36,16 @@
       <button mat-raised-button color="primary" type="submit">Regisztráció</button>
     </form>
   
+    <!-- Success Message Section -->
     <ng-template #successMessage>
       <p>{{ message }}</p>
       <button mat-raised-button color="accent" (click)="goToLogin()">Vissza a Bejelentkezéshez</button>
     </ng-template>
+  
+    <!-- Error Message Section -->
+    <div *ngIf="!registrationSuccess && message">
+      <p>{{ message }}</p>
+    </div>
   </mat-card>
+  
   
