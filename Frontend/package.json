@@ -14,5 +14,8 @@
     "@angular/router": "^19.0.4",
     "typescript": "^5.6.3",
     "zone.js": "^0.15.0"
+  },
+  "scripts": {
+    "build": "ng build  --configuration production"
   }
 }
